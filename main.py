@@ -14,7 +14,7 @@ def extract_job_details(job_url):
     llm = ChatGroq(
         model_name="llama-3.1-70b-versatile",
         temperature=0,
-        groq_api_key="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"  # Replace with your actual API key
+        groq_api_key="YOUR_API_KEY"  # Replace with your actual API key
     )
 
     # Loading webpage content

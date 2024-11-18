@@ -1,3 +1,4 @@
+import os
 import gradio as gr
 import validators  # For URL validation
 from langchain_groq import ChatGroq

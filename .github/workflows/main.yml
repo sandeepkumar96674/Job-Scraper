@@ -1,4 +1,4 @@
-name: careerlens
+name: Job-Scraper
 
 on:
   # Runs on push to any of the below branches

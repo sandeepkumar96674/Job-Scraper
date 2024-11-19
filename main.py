@@ -121,6 +121,6 @@ interface = gr.Interface(
 if __name__ == "__main__":
     interface.launch(
         server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", 0)),  # Dynamically use an available port or PORT env variable
+        server_port=int(os.environ.get("PORT", 10000)),  # Dynamically use an available port or PORT env variable
         custom_js=google_analytics
     )

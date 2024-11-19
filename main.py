@@ -6,6 +6,17 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 
+# Google Analytics code snippet
+google_analytics = """
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-56ZH5JXF27"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-56ZH5JXF27');
+</script>
+"""
+
 # Function to extract job details
 def extract_job_details(job_url):
     if not validators.url(job_url):
@@ -106,6 +117,10 @@ interface = gr.Interface(
     live=True
 )
 
-# Launch the Gradio app
+# Launch the Gradio app with custom Google Analytics
 if __name__ == "__main__":
-    interface.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
+    interface.launch(
+        server_name="0.0.0.0",
+        server_port=int(os.environ.get("PORT", 7860)),
+        custom_js=google_analytics
+    )

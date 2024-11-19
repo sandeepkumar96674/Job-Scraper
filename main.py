@@ -118,13 +118,12 @@ interface = gr.Interface(
 )
 
 # Launch the Gradio app with dynamic port handling and Google Analytics
+# Launch the Gradio app
 if __name__ == "__main__":
-   interface.launch(
-    server_name="0.0.0.0",
-    server_port=int(os.environ.get("PORT", 7860)),  # Use PORT env variable or fallback
-    inbrowser=True,  # Opens the app in a browser when launched
-    auth=None,  # Add authentication if needed
-    favicon_path=None,  # You can add a custom favicon if required
-    theme="index.html"  # Reference your custom HTML file
-)
+    interface.launch(
+        server_name="0.0.0.0",
+        server_port=int(os.environ.get("PORT", 7860)),  # Use PORT env variable
+        inbrowser=True  # Opens app in browser
+    )
+
 

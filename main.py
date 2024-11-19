@@ -117,10 +117,10 @@ interface = gr.Interface(
     live=True
 )
 
-# Launch the Gradio app with custom Google Analytics
+# Launch the Gradio app with dynamic port handling and Google Analytics
 if __name__ == "__main__":
     interface.launch(
         server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", 7860)),
+        server_port=int(os.environ.get("PORT", 0)),  # Dynamically use an available port or PORT env variable
         custom_js=google_analytics
     )

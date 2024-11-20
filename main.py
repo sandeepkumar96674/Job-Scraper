@@ -116,7 +116,6 @@ interface.launch(
     server_name="0.0.0.0",  # Bind to all network interfaces
     server_port=port,       # Dynamically bind to the port specified by Render
     share=False,            # Disable public sharing
-    show_footer=False, 
     custom_footer=footer_component(),
     theme="default",
     css="""

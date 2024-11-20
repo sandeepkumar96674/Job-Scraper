@@ -125,7 +125,7 @@ interface = gr.Interface(
 interface = interface.queue()
 
 # Port Configuration and Launch
-port = int(os.environ.get("PORT", 10000))  # Dynamically assign port from Render's environment
+port = int(os.environ.get("PORT", 10000))  # Default Render's port is 10000
 interface.launch(
     server_name="0.0.0.0", 
     server_port=port, 
@@ -138,3 +138,4 @@ interface.launch(
         button[title="Flag"] { display: none !important; }
     """
 )
+

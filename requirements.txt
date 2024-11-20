@@ -1,4 +1,4 @@
-gradio==4.44.1
+gradio==3.26.0
 validators==0.20.0
 langchain==0.0.175
 langchain-groq==0.1.0

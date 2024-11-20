@@ -105,17 +105,19 @@ def gradio_interface(job_url):
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
-    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
+    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=5, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
     live=True
 )
 
-# Port Configuration and Launch
+# **Critical Part**: Port configuration and binding
 port = int(os.environ.get("PORT", 10000))  # Default Render's port is 10000
+
+# Launch Gradio app
 interface.launch(
-    server_name="0.0.0.0",  # Bind to all network interfaces
+    server_name="0.0.0.0",  # Bind to all network interfaces (this allows external services to access the app)
     server_port=port,       # Dynamically bind to the port specified by Render
-    share=False,            # Disable public sharing
+    share=False,            # Disabling public share link
     custom_footer=footer_component(),
     theme="default",
     css="""

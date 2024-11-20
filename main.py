@@ -89,7 +89,7 @@ def format_job_details(job_details):
 
     return formatted_output.strip()  # Remove trailing whitespace
 
-# Footer component
+# Footer component with LinkedIn link
 def footer_component():
     return '<p style="text-align: center;">Created by <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank">Sandeep Kumar 😌</a></p>'
 
@@ -105,20 +105,20 @@ def gradio_interface(job_url):
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
-    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=5, elem_id="large-input"),
+    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
     live=True
 )
 
-# **Critical Part**: Port configuration and binding
-port = int(os.environ.get("PORT", 10000))  # Default Render's port is 10000
+# Port Configuration and Launch
+# Render uses the PORT environment variable for dynamic port allocation.
+port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
 
-# Launch Gradio app
 interface.launch(
-    server_name="0.0.0.0",  # Bind to all network interfaces (this allows external services to access the app)
-    server_port=port,       # Dynamically bind to the port specified by Render
-    share=False,            # Disabling public share link
-    custom_footer=footer_component(),
+    server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
+    server_port=port,       # Use the dynamically assigned port
+    share=False,            # Disable public sharing
+    custom_footer=footer_component(),  # Custom footer with LinkedIn link
     theme="default",
     css="""
         #large-input { width: 100%; height: 120px; font-size: 16px; }

@@ -125,11 +125,11 @@ interface = gr.Interface(
 interface = interface.queue()
 
 # Port Configuration and Launch
-port = int(os.environ.get("PORT", 10000))  # Dynamically assign port if provided by the environment
+port = int(os.environ.get("PORT", 8000))  # Dynamically assign port from Render's environment
 interface.launch(
     server_name="0.0.0.0", 
     server_port=port, 
-    share=True,  # Enable sharing for environments with restricted ports
+    share=False,  # Render expects direct port binding
     show_footer=False, 
     custom_footer=footer_component(),
     theme="default",

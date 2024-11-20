@@ -6,9 +6,6 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 
-# Global visitor counter
-visitor_count = 0
-
 # Function to extract job details
 def extract_job_details(job_url):
     if not validators.url(job_url):
@@ -92,44 +89,33 @@ def format_job_details(job_details):
 
     return formatted_output.strip()  # Remove trailing whitespace
 
+# Footer component
+def footer_component():
+    return '<p style="text-align: center;">Created by <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank">Sandeep Kumar 😌</a></p>'
+
 # Gradio UI function
 def gradio_interface(job_url):
-    global visitor_count
-    visitor_count += 1  # Increment the visitor counter
     try:
         job_details = extract_job_details(job_url)
         formatted_output = format_job_details(job_details)
-        return f"**Visitor Count**: {visitor_count}\n\n" + formatted_output
+        return formatted_output
     except Exception as e:
-        return f"**Visitor Count**: {visitor_count}\n\nAn error occurred: {e}"
-
-# Custom footer component
-def footer_component():
-    return """
-    <div style="text-align: center; margin-top: 20px; font-size: 14px;">
-        <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank" style="text-decoration: none; color: #0073b1;">
-            Created by Sandeep Kumar 😌
-        </a>
-    </div>
-    """
+        return f"An error occurred: {e}"
 
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
-    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=3, elem_id="large-input"),
+    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
     live=True
 )
 
-# Add the footer and remove "Flag" button by customizing CSS
-interface = interface.queue()
-
 # Port Configuration and Launch
 port = int(os.environ.get("PORT", 10000))  # Default Render's port is 10000
 interface.launch(
-    server_name="0.0.0.0", 
-    server_port=port, 
-    share=False,  # Render expects direct port binding
+    server_name="0.0.0.0",  # Bind to all network interfaces
+    server_port=port,       # Dynamically bind to the port specified by Render
+    share=False,            # Disable public sharing
     show_footer=False, 
     custom_footer=footer_component(),
     theme="default",
@@ -138,4 +124,3 @@ interface.launch(
         button[title="Flag"] { display: none !important; }
     """
 )
-

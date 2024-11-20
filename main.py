@@ -111,7 +111,7 @@ interface = gr.Interface(
     inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
     live=True,
-    allow_flagging=False,  # Optional: Disable flagging
+    allow_flagging="never",  # 'never' as per the warning fix
     theme="default",
     css="""
         #large-input { width: 100%; height: 120px; font-size: 16px; }
@@ -122,10 +122,12 @@ interface = gr.Interface(
 # Port Configuration and Launch
 port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
 
-# Launch the interface with custom footer (HTML footer)
+# Launch the interface without the footer argument, manually add the footer to the UI
 interface.launch(
     server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
-    server_port=port,       # Use the dynamically assigned port
-    share=False,            # Disable public sharing
-    footer=footer_html      # Custom footer HTML
+    server_port=port,        # Use the dynamically assigned port
+    share=False,             # Disable public sharing
 )
+
+# Add footer manually after launching the interface
+gr.HTML(footer_html).launch(inline=True)  # Add the footer manually

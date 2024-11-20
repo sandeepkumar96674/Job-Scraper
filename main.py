@@ -112,6 +112,7 @@ def footer_component():
         </a>
     </div>
     """
+
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
@@ -119,11 +120,16 @@ interface = gr.Interface(
     outputs=gr.Markdown(label="Formatted Job Details"),
     live=True
 )
+
 # Add the footer and remove "Flag" button by customizing CSS
 interface = interface.queue()
+
+# Port Configuration and Launch
+port = int(os.environ.get("PORT", 10000))  # Dynamically assign port if provided by the environment
 interface.launch(
     server_name="0.0.0.0", 
-    server_port=int(os.environ.get("PORT", 7860)), 
+    server_port=port, 
+    share=True,  # Enable sharing for environments with restricted ports
     show_footer=False, 
     custom_footer=footer_component(),
     theme="default",

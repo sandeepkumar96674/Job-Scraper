@@ -89,10 +89,6 @@ def format_job_details(job_details):
 
     return formatted_output.strip()  # Remove trailing whitespace
 
-# Footer component with LinkedIn link
-def footer_component():
-    return '<p style="text-align: center;">Created by <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank">Sandeep Kumar 😌</a></p>'
-
 # Gradio UI function
 def gradio_interface(job_url):
     try:
@@ -102,26 +98,34 @@ def gradio_interface(job_url):
     except Exception as e:
         return f"An error occurred: {e}"
 
+# HTML footer with LinkedIn link
+footer_html = """
+<p style="text-align: center;">
+    Created by <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank">Sandeep Kumar 😌</a>
+</p>
+"""
+
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
     inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
-    live=True
-)
-
-# Port Configuration and Launch
-# Render uses the PORT environment variable for dynamic port allocation.
-port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
-
-interface.launch(
-    server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
-    server_port=port,       # Use the dynamically assigned port
-    share=False,            # Disable public sharing
-    custom_footer=footer_component(),  # Custom footer with LinkedIn link
+    live=True,
+    allow_flagging=False,  # Optional: Disable flagging
     theme="default",
     css="""
         #large-input { width: 100%; height: 120px; font-size: 16px; }
         button[title="Flag"] { display: none !important; }
     """
+)
+
+# Port Configuration and Launch
+port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
+
+# Launch the interface with custom footer (HTML footer)
+interface.launch(
+    server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
+    server_port=port,       # Use the dynamically assigned port
+    share=False,            # Disable public sharing
+    footer=footer_html      # Custom footer HTML
 )

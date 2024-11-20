@@ -125,7 +125,7 @@ interface = gr.Interface(
 interface = interface.queue()
 
 # Port Configuration and Launch
-port = int(os.environ.get("PORT", 8000))  # Dynamically assign port from Render's environment
+port = int(os.environ.get("PORT", 10000))  # Dynamically assign port from Render's environment
 interface.launch(
     server_name="0.0.0.0", 
     server_port=port, 

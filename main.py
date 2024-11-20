@@ -6,16 +6,8 @@ from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 
-# Google Analytics code snippet
-google_analytics = """
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-56ZH5JXF27"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-56ZH5JXF27');
-</script>
-"""
+# Global visitor counter
+visitor_count = 0
 
 # Function to extract job details
 def extract_job_details(job_url):
@@ -102,28 +94,41 @@ def format_job_details(job_details):
 
 # Gradio UI function
 def gradio_interface(job_url):
+    global visitor_count
+    visitor_count += 1  # Increment the visitor counter
     try:
         job_details = extract_job_details(job_url)
         formatted_output = format_job_details(job_details)
-        return formatted_output
+        return f"**Visitor Count**: {visitor_count}\n\n" + formatted_output
     except Exception as e:
-        return f"An error occurred: {e}"
+        return f"**Visitor Count**: {visitor_count}\n\nAn error occurred: {e}"
 
+# Custom footer component
+def footer_component():
+    return """
+    <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+        <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank" style="text-decoration: none; color: #0073b1;">
+            Created by Sandeep Kumar 😌
+        </a>
+    </div>
+    """
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
-    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2),
+    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=3, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
     live=True
 )
-
-# Launch the Gradio app with dynamic port handling and Google Analytics
-# Launch the Gradio app
-if __name__ == "__main__":
-    interface.launch(
-        server_name="0.0.0.0",
-        server_port=int(os.environ.get("PORT", 7860)),  # Use PORT env variable
-        inbrowser=True  # Opens app in browser
-    )
-
-
+# Add the footer and remove "Flag" button by customizing CSS
+interface = interface.queue()
+interface.launch(
+    server_name="0.0.0.0", 
+    server_port=int(os.environ.get("PORT", 7860)), 
+    show_footer=False, 
+    custom_footer=footer_component(),
+    theme="default",
+    css="""
+        #large-input { width: 100%; height: 120px; font-size: 16px; }
+        button[title="Flag"] { display: none !important; }
+    """
+)

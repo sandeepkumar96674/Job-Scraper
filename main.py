@@ -116,6 +116,17 @@ interface = gr.Interface(
     css="""
         #large-input { width: 100%; height: 120px; font-size: 16px; }
         button[title="Flag"] { display: none !important; }
+        .linkedin-button { 
+            font-size: 12px;
+            background-color: #0077b5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        .gradio-container {
+            padding-bottom: 30px;
+        }
     """
 )
 

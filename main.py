@@ -7,6 +7,10 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
 import json
 
+# Function to clean the LLM output by replacing curly quotes with standard quotes
+def clean_json_output(output):
+    return output.replace("“", '"').replace("”", '"').strip()
+
 # Function to extract job details
 def extract_job_details(job_url):
     if not validators.url(job_url):
@@ -56,11 +60,14 @@ def extract_job_details(job_url):
     chain_extract = prompt_extract | llm
     res = chain_extract.invoke(input={'page_data': page_content})
 
+    # Clean the JSON output to replace invalid quotes
+    cleaned_output = clean_json_output(res.content)
+
     # Validate and parse the JSON output
     try:
-        json_res = json.loads(res.content)  # Strict validation of JSON output
+        json_res = json.loads(cleaned_output)  # Strict validation of JSON output
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON output from LLM: {res.content}")
+        raise ValueError(f"Invalid JSON output from LLM: {cleaned_output}")
 
     return json_res
 

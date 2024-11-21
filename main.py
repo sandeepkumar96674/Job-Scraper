@@ -5,6 +5,7 @@ from langchain_groq import ChatGroq
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
+import json
 
 # Function to extract job details
 def extract_job_details(job_url):
@@ -47,7 +48,7 @@ def extract_job_details(job_url):
                 }}
             ]
         }}
-        Please ensure that the skills section includes exact descriptions as written on the page. Do not summarize or shorten the information. Ensure that the output is valid JSON and does not include any additional text or explanation.
+        **DO NOT** include any extra text, explanations, or code. Only return valid JSON.
         """
     )
 
@@ -55,9 +56,11 @@ def extract_job_details(job_url):
     chain_extract = prompt_extract | llm
     res = chain_extract.invoke(input={'page_data': page_content})
 
-    # Parse the response as JSON
-    json_parser = JsonOutputParser()
-    json_res = json_parser.parse(res.content)
+    # Validate and parse the JSON output
+    try:
+        json_res = json.loads(res.content)  # Strict validation of JSON output
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON output from LLM: {res.content}")
 
     return json_res
 

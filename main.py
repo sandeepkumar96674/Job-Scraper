@@ -98,13 +98,6 @@ def gradio_interface(job_url):
     except Exception as e:
         return f"An error occurred: {e}"
 
-# HTML footer with LinkedIn link
-footer_html = """
-<p style="text-align: center;">
-    Created by <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank">Sandeep Kumar 😌</a>
-</p>
-"""
-
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
@@ -140,5 +133,3 @@ interface.launch(
     share=False,             # Disable public sharing
 )
 
-# Add footer manually after launching the interface
-gr.HTML(footer_html).launch(inline=True)  # Add the footer manually

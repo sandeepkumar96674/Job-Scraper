@@ -101,9 +101,14 @@ def gradio_interface(job_url):
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
-    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
+    inputs=gr.Textbox(
+        label="Enter Job Posting URL",
+        placeholder="https://example.com/job",
+        lines=2,
+        elem_id="large-input"
+    ),
     outputs=gr.Markdown(label="Formatted Job Details"),
-    live=True
+    live=True,
 )
 
 # Port Configuration and Launch
@@ -112,9 +117,5 @@ port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
 interface.launch(
     server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
     server_port=port,       # Use the dynamically assigned port
-    share=False,            # Disable public sharing
-    css="""
-        #large-input { width: 100%; height: 120px; font-size: 16px; }
-        button[title="Flag"] { display: none !important; }
-    """
+    share=False             # Disable public sharing
 )

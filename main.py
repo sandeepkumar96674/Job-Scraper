@@ -27,6 +27,9 @@ def extract_job_details(job_url):
     
     page_content = pg_data.pop().page_content
 
+    # Debugging: Print page content to verify
+    print("Page content loaded successfully: ", page_content[:500])  # Print first 500 chars for inspection
+
     # Prompt for extracting job details
     prompt_extract = PromptTemplate.from_template(
         """
@@ -55,16 +58,26 @@ def extract_job_details(job_url):
     chain_extract = prompt_extract | llm
     res = chain_extract.invoke(input={'page_data': page_content})
 
-    # Parse the response as JSON
-    json_parser = JsonOutputParser()
-    json_res = json_parser.parse(res.content)
+    # Debugging: Print the response content to verify extraction
+    print("Response from LLM: ", res.content)
 
+    # Parse the response as JSON
+    try:
+        json_parser = JsonOutputParser()
+        json_res = json_parser.parse(res.content)
+    except Exception as e:
+        print(f"Error parsing JSON: {e}")
+        raise ValueError("Failed to parse response as valid JSON.")
+    
     return json_res
 
 # Function to format the extracted job details
 def format_job_details(job_details):
     formatted_output = ""
     job_postings = job_details.get("job_postings", [])
+
+    if not job_postings:
+        return "No job postings found in the extracted data."
 
     for index, job in enumerate(job_postings, start=1):
         formatted_output += f"### Job Posting {index}:\n\n"

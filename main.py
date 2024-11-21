@@ -1,3 +1,4 @@
+import os
 import gradio as gr
 import validators  # For URL validation
 from langchain_groq import ChatGroq
@@ -23,7 +24,7 @@ def extract_job_details(job_url):
 
     if not pg_data:
         raise ValueError("No content found on the provided URL.")
-
+    
     page_content = pg_data.pop().page_content
 
     # Prompt for extracting job details
@@ -69,24 +70,28 @@ def format_job_details(job_details):
         formatted_output += f"### Job Posting {index}:\n\n"
         formatted_output += f"**Role**: {job.get('role', 'N/A')}\n\n"
         formatted_output += f"**Experience**: {job.get('experience', 'N/A')}\n\n"
-
+        
         # Combine experience with skills
         skills = job.get('skills', [])
         experience = job.get('experience', 'N/A')
-
+        
         formatted_output += "**Skills and Experience**:\n"
-
+        
         if skills:
             for skill_index, skill in enumerate(skills, start=1):
                 formatted_output += f"  - {skill}\n"
             formatted_output += f"  **Experience**: {experience}\n\n"
         else:
             formatted_output += "  - No skills listed.\n\n"
-
+        
         formatted_output += f"**Description**: {job.get('description', 'N/A')}\n\n"
         formatted_output += "---\n"  # Add a separator between job postings
 
     return formatted_output.strip()  # Remove trailing whitespace
+
+# Footer component
+def footer_component():
+    return '<p style="text-align: center;">Created by <a href="https://www.linkedin.com/in/the-sandeep-kumar" target="_blank">Sandeep Kumar 😌</a></p>'
 
 # Gradio UI function
 def gradio_interface(job_url):
@@ -100,12 +105,22 @@ def gradio_interface(job_url):
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
-    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2),
+    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
     live=True
 )
 
-# Launch the Gradio app
-if __name__ == "__main__":
-    interface.launch()
-    interface.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 7860)))
+# Port Configuration and Launch
+# Render uses the PORT environment variable for dynamic port allocation.
+port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
+interface.launch(
+    server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
+    server_port=port,       # Use the dynamically assigned port
+    share=False,            # Disable public sharing
+    custom_footer=footer_component(),  # Custom footer with LinkedIn link
+    theme="default",
+    css="""
+        #large-input { width: 100%; height: 120px; font-size: 16px; }
+        button[title="Flag"] { display: none !important; }
+    """
+)

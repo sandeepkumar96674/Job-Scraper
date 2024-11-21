@@ -4,7 +4,6 @@ import validators  # For URL validation
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
-from langchain_core.output_parsers import JsonOutputParser
 import json  # For manual JSON parsing if needed
 
 # Function to extract job details
@@ -60,7 +59,7 @@ def extract_job_details(job_url):
     res = chain_extract.invoke(input={'page_data': page_content})
 
     # Debugging: Print the response to verify the format
-    print("Response from LLM: ", res.content)
+    print("Raw response from LLM: ", res.content)  # Print the entire raw content of the response
 
     # Try parsing the response as JSON manually and inspect the result
     try:
@@ -133,4 +132,3 @@ interface.launch(
     server_port=port,       # Use the dynamically assigned port
     share=False             # Disable public sharing
 )
-

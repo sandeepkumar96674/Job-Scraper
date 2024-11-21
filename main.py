@@ -80,9 +80,10 @@ def format_job_details(job_details):
         if skills:
             for skill_index, skill in enumerate(skills, start=1):
                 formatted_output += f"  - {skill}\n"
-            formatted_output += f"  **Experience**: {experience}\n\n"
         else:
-            formatted_output += "  - No skills listed.\n\n"
+            formatted_output += "  - No skills listed.\n"
+        
+        formatted_output += f"  **Experience**: {experience}\n\n"
 
         formatted_output += f"**Description**: {job.get('description', 'N/A')}\n\n"
         formatted_output += "---\n"  # Add a separator between job postings

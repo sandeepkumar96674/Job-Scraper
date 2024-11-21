@@ -113,7 +113,6 @@ interface.launch(
     server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
     server_port=port,       # Use the dynamically assigned port
     share=False,            # Disable public sharing
-    theme="default",
     css="""
         #large-input { width: 100%; height: 120px; font-size: 16px; }
         button[title="Flag"] { display: none !important; }

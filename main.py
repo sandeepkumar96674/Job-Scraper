@@ -4,7 +4,7 @@ import validators  # For URL validation
 from langchain_groq import ChatGroq
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
-import json  # For manual JSON parsing if needed
+from langchain_core.output_parsers import JsonOutputParser
 
 # Function to extract job details
 def extract_job_details(job_url):
@@ -24,11 +24,8 @@ def extract_job_details(job_url):
 
     if not pg_data:
         raise ValueError("No content found on the provided URL.")
-    
-    page_content = pg_data.pop().page_content
 
-    # Debugging: Print page content to verify
-    print("Page content loaded successfully: ", page_content[:500])  # Print first 500 chars for inspection
+    page_content = pg_data.pop().page_content
 
     # Prompt for extracting job details
     prompt_extract = PromptTemplate.from_template(
@@ -58,17 +55,10 @@ def extract_job_details(job_url):
     chain_extract = prompt_extract | llm
     res = chain_extract.invoke(input={'page_data': page_content})
 
-    # Debugging: Print the response to verify the format
-    print("Raw response from LLM: ", res.content)  # Print the entire raw content of the response
+    # Parse the response as JSON
+    json_parser = JsonOutputParser()
+    json_res = json_parser.parse(res.content)
 
-    # Try parsing the response as JSON manually and inspect the result
-    try:
-        json_res = json.loads(res.content)  # Use the standard json library to parse the response
-    except json.JSONDecodeError as e:
-        print(f"Error parsing JSON: {e}")
-        print(f"Raw response content: {res.content}")
-        raise ValueError("Failed to parse response as valid JSON.")
-    
     return json_res
 
 # Function to format the extracted job details
@@ -76,27 +66,24 @@ def format_job_details(job_details):
     formatted_output = ""
     job_postings = job_details.get("job_postings", [])
 
-    if not job_postings:
-        return "No job postings found in the extracted data."
-
     for index, job in enumerate(job_postings, start=1):
         formatted_output += f"### Job Posting {index}:\n\n"
         formatted_output += f"**Role**: {job.get('role', 'N/A')}\n\n"
         formatted_output += f"**Experience**: {job.get('experience', 'N/A')}\n\n"
-        
+
         # Combine experience with skills
         skills = job.get('skills', [])
         experience = job.get('experience', 'N/A')
-        
+
         formatted_output += "**Skills and Experience**:\n"
-        
+
         if skills:
             for skill_index, skill in enumerate(skills, start=1):
                 formatted_output += f"  - {skill}\n"
             formatted_output += f"  **Experience**: {experience}\n\n"
         else:
             formatted_output += "  - No skills listed.\n\n"
-        
+
         formatted_output += f"**Description**: {job.get('description', 'N/A')}\n\n"
         formatted_output += "---\n"  # Add a separator between job postings
 
@@ -114,14 +101,9 @@ def gradio_interface(job_url):
 # Gradio interface setup
 interface = gr.Interface(
     fn=gradio_interface,
-    inputs=gr.Textbox(
-        label="Enter Job Posting URL",
-        placeholder="https://example.com/job",
-        lines=2,
-        elem_id="large-input"
-    ),
+    inputs=gr.Textbox(label="Enter Job Posting URL", placeholder="https://example.com/job", lines=2, elem_id="large-input"),
     outputs=gr.Markdown(label="Formatted Job Details"),
-    live=True,
+    live=True
 )
 
 # Port Configuration and Launch
@@ -130,5 +112,5 @@ port = int(os.environ.get("PORT", 10000))  # Default to 10000 if PORT is not set
 interface.launch(
     server_name="0.0.0.0",  # Bind to all network interfaces to allow external access
     server_port=port,       # Use the dynamically assigned port
-    share=False             # Disable public sharing
+    share=False,            # Disable public sharing            # Disable public sharing
 )

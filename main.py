@@ -5,6 +5,7 @@ from langchain_groq import ChatGroq
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import JsonOutputParser
+import json  # For manual JSON parsing if needed
 
 # Function to extract job details
 def extract_job_details(job_url):
@@ -58,15 +59,15 @@ def extract_job_details(job_url):
     chain_extract = prompt_extract | llm
     res = chain_extract.invoke(input={'page_data': page_content})
 
-    # Debugging: Print the response content to verify extraction
+    # Debugging: Print the response to verify the format
     print("Response from LLM: ", res.content)
 
-    # Parse the response as JSON
+    # Try parsing the response as JSON manually and inspect the result
     try:
-        json_parser = JsonOutputParser()
-        json_res = json_parser.parse(res.content)
-    except Exception as e:
+        json_res = json.loads(res.content)  # Use the standard json library to parse the response
+    except json.JSONDecodeError as e:
         print(f"Error parsing JSON: {e}")
+        print(f"Raw response content: {res.content}")
         raise ValueError("Failed to parse response as valid JSON.")
     
     return json_res
@@ -132,3 +133,4 @@ interface.launch(
     server_port=port,       # Use the dynamically assigned port
     share=False             # Disable public sharing
 )
+
